@@ -242,39 +242,6 @@ In addition to static publication figures, the framework compiles **5 standalone
 
 > **Tip:** Open any `.html` file from the `visualizations/` folder in Chrome, Firefox, Safari, or Edge to explore the interactive visual analytics.
 
----
-
-## 📐 Mathematical Methodology
-
-### 1. Vectorized Min-Max Feature Normalization
-To prevent scale bias across wildly divergent metrics (such as Context Window up to 2M tokens vs. Latency down to 0.9s), each feature is normalized to a $[0, 1]$ interval:
-
-$$\text{Norm}(X) = \frac{X - \min(X)}{\max(X) - \min(X)}$$
-
-For cost and latency metrics where **lower values are superior**, the inverse transformation is applied:
-
-$$\text{Norm}_{\text{inv}}(X) = 1.0 - \text{Norm}(X)$$
-
-### 2. Multi-Criteria Composite Score (0–100 Scale)
-The global model ranking uses an enterprise-calibrated weighted Multi-Criteria Decision Analysis (MCDA) function:
-
-$$\text{Composite Score} = 100 \times \Big[ 0.25 \cdot \text{Norm}(\text{Arena}) + 0.20 \cdot \text{Norm}(\text{Speed}) + 0.15 \cdot \text{Norm}(\text{MMLU}) + 0.15 \cdot \text{Norm}_{\text{inv}}(\text{Latency}) + 0.15 \cdot \text{Norm}_{\text{inv}}(\text{Price}) + 0.10 \cdot \text{Norm}(\text{Energy}) \Big]$$
-
-### 3. Silverman's Rule of Thumb Kernel Density Estimation (KDE)
-To eliminate external dependencies on heavy scientific libraries like `scipy`, Gaussian KDE is implemented in **pure NumPy**:
-
-$$\hat{f}(x) = \frac{1}{n h} \sum_{i=1}^n \frac{1}{\sqrt{2\pi}} \exp\left( -\frac{1}{2} \left( \frac{x - X_i}{h} \right)^2 \right)$$
-
-where optimal bandwidth $h$ is chosen via Silverman's formulation:
-
-$$h = 1.06 \cdot \hat{\sigma} \cdot n^{-1/5}$$
-
-### 4. Non-Dominated Pareto Sorting
-A point $M_i$ dominates $M_j$ ($M_i \succ M_j$) in a two-attribute minimization/maximization problem iff:
-
-$$X_i \le X_j \quad \text{and} \quad Y_i \ge Y_j \quad \text{with at least one strict inequality.}$$
-
-Non-dominated points are extracted in $\mathcal{O}(n^2)$ vectorized NumPy operations.
 
 ---
 
